@@ -96,13 +96,13 @@ final class DatabaseSessionHandler implements SessionHandlerInterface
             $sql = 'INSERT INTO sessions (id, user_id, data, created_at, updated_at, expires_at, absolute_expires_at, ip_address, user_agent)
                 VALUES (:id, :user_id, :data, :created_at, :updated_at, :expires_at, :absolute_expires_at, :ip_address, :user_agent)
                 ON DUPLICATE KEY UPDATE
-                    user_id = :user_id,
-                    data = :data,
-                    updated_at = :updated_at,
-                    expires_at = :expires_at,
-                    ip_address = :ip_address,
-                    user_agent = :user_agent,
-                    absolute_expires_at = IFNULL(absolute_expires_at, :absolute_expires_at)';
+                    user_id = VALUES(user_id),
+                    data = VALUES(data),
+                    updated_at = VALUES(updated_at),
+                    expires_at = VALUES(expires_at),
+                    ip_address = VALUES(ip_address),
+                    user_agent = VALUES(user_agent),
+                    absolute_expires_at = IFNULL(absolute_expires_at, VALUES(absolute_expires_at))';
         } else {
             // SQLite mirrors the same guarantees using COALESCE so the
             // absolute expiry stays anchored to the first session creation.
