@@ -19,21 +19,20 @@ jobs:
       - name: Run project test suite
         run: php tests/run.php
 
-      - name: Build deployment artifact
+      - name: Build deployment artifact (only public/)
         run: |
           rm -rf build
-          mkdir -p build/passless
-          rsync -av --delete \
+          mkdir -p build
+          rsync -av \
             --exclude='.git/' \
             --exclude='.github/' \
-            --exclude='build/' \
             --exclude='tests/' \
             --exclude='docs/' \
-            --exclude='docker-compose.yml' \
-            --exclude='phpstan.neon' \
-            --exclude='phpstan.neon.dist' \
             --exclude='tools/' \
-            ./ build/passless/
+            --exclude='deploy/' \
+            --exclude='docker-compose.yml' \
+            --exclude='phpstan.neon*' \
+            ./public/ build/
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -43,13 +42,14 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftps
           port: 21
-          local-dir: build/passless/
+          local-dir: build/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           exclude: |
             **/.git*
             **/.github*
             **/tests/**
             **/docs/**
-            **/docker-compose.yml
+            **/deploy/**
             **/tools/**
+            **/docker-compose.yml
             **/phpstan.neon*
