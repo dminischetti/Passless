@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftps
           port: 21
-          local-dir: build/passless/public
+          local-dir: build/passless/public/
           server-dir: ${{ secrets.FTP_SERVER_PUBLIC_DIR }}
 
       - name: Deploy /lib + /database (non webroot)
